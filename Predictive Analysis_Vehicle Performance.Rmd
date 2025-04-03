@@ -1,0 +1,266 @@
+---
+title: "Tejesh_Varma_Maddana_MSBA_A3"
+author: "Tejesh Varma Maddana"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Problem Statement**
+
+#1. Run the following code in R-studio to create two variables X and Y.
+```{r}
+set.seed(2017)
+X=runif(100)*10
+Y=X*4+3.45
+Y=rnorm(100)*0.29*Y+Y
+```
+
+**1.a) Plot Y against X. Include a screenshot of the plot in your submission. Using the File menu you can save the graph as a picture on your computer. Based on the plot do you think we can fit a linear model to explain Y based on X?**
+
+
+```{r}
+#Creating a Scatter plot
+Scatter_plot <- plot(X, Y, main="The Scatter Plot of Y vs. X", col = "green",font=6,pch=15)
+#Assigning the label of Horizontal Axis
+Scatter_plot.xlabel= "X"
+#Assigning the label of the Varticle Axis
+Scatter_plot.ylabel= "Y"
+#Printing the Scatter plot based out of relationship established and given above
+Scatter_plot
+```
+From the graph shown above there is a positive linear trend between X and Y variables and it appears that a linear model might be fit.
+ 
+
+**1.b) Construct a simple linear model of Y based on X. Write the equation that explains Y based on X. What is the accuracy of this model?**
+```{r}
+Simple_lp_model <- lm(Y~X)
+summary(Simple_lp_model)
+```
+
+---------------------------#Consider an equation that shows Y based on X:-   Y = slope * X + intercept
+
+**1.c) How the Coefficient of Determination, R2, of the model above is related to the correlation coefficient of X and Y?**
+```{r}
+coefficients(Simple_lp_model)
+```
+
+```{r}
+cor(X,Y)^2
+```
+
+#From the above model summary and as well as from the above results, it is can be seen that R-squared (R²) is 0.6517.
+
+#The coefficient of X is estimated as 3.6108
+
+#In a Simple linear regression model, the correlation coefficient (r) and R-squared (R²) have the following relationship:
+
+$$R² = r²$$
+
+correlation coefficient (r) is determined by square root of R-squared
+$$r = √R²$$
+From the above model results, the value of  R-squared is 0.6517, Therefore finding the value of r by substituting the R value in the above equation
+
+```{r}
+r <- sqrt(0.6517)
+#Printing the value of r
+paste("The value of r is", r)
+```
+
+#The correlation coefficient (r) is approximately 0.807(rounded to 3 decimals). The result indicates a strong positive linear relationship between X and Y since it is close to 1, indicating that a large proportion of the variance in Y is explained by the linear relationship with X.
+
+#Positive sign of the correlation coefficient (r) and coefficient of X in the summary of the model also confirms the positive linear relationship between X and Y. This implies that Y tends to increase as X does, and vice versa.
+
+**2. We will use the ‘mtcars’ dataset for this question. The dataset is already included in your R distribution. The dataset shows some of the characteristics of different cars. The following shows few samples (i.e. the first 6 rows) of the dataset. The description of the dataset can be found**
+
+```{r}
+#Loading the dataset of "mtcars" which is pre-loaded in R
+#using the head() fuction to the dataset of "mtcars" to display the first 6 rows of the dataset
+cars <- mtcars
+head(cars)
+```
+
+**2.a) James wants to buy a car. He and his friend, Chris, have different opinions about the Horse Power (hp) of cars. James think the weight of a car (wt) can be used to estimate the Horse Power of the car while Chris thinks the fuel consumption expressed in Mile Per Gallon (mpg), is a better estimator of the (hp). Who do you think is right? Construct simple linear models using mtcars data to answer the question.**
+
+
+#James point of view in buying the best car, weight is used as an estimator of horsepower
+```{r}
+james_bestcar_model <- lm(hp~wt, data = cars)
+#Printing the summary of the james car model in finding his best car
+summary(james_bestcar_model)
+```
+#From this linear model we can see that weight results in a model that accounts for 43.39% of the variation in horsepower
+
+#Chris point of view in buying the best car, miles per gallon is used as an estimator of horsepower
+```{r}
+model_chris <- lm(hp~mpg , data = cars)
+#Printing the summary of the chris car model in finding his best car
+summary(model_chris)
+```
+
+#From this linear model the fuel efficiency results in a model that accounts for 60.24% of the variation of the horsepower. Therefore, the fuel efficiency (mpg) is considered statistically significant in this model.
+
+#James' Car Model Results:
+
+Coefficient for wt: 46.160
+
+R-squared (R²): 0.4339
+
+p-value for wt: 4.146e-05
+
+#Chris' Car Model Results:
+
+Coefficient for mpg: -8.83
+
+R-squared (R²): 0.6024
+
+p-value for mpg: 1.788e-07
+
+#The statistical significance of the models developed by Chris and James indicates the importance of the selected variables in predicting Horse Power.
+
+Rˆ2 of the model based on mpg is 0.60 Therefore, it is more accurate model.So, Chris is right here.
+
+According to Chris' calculation, a car's horse power will drop by about 8.83 units for every extra mile per gallon it drives.
+
+James' model predicts that the car's horsepower will rise by roughly 46.160 units for every unit of added weight.
+
+**2. b) Build a model that uses the number of cylinders (cyl) and the mile per gallon (mpg) values of a car to predict the car Horse Power (hp). Using this model, what is the estimated Horse Power of a car with 4 calendar and mpg of 22?**
+
+```{r}
+hp_car_model <- lm(hp~cyl+mpg, data = cars)
+
+##Creating a new dataframe with the required values of a car with 4 calendar and mpg of 22 for prediction of car hp
+New_df <- data.frame(cyl = 4, mpg = 22)
+predicted_hp_car <- predict(hp_car_model, newdata = New_df)
+
+#printing the predicted hp pf the car
+paste("The Estimated Horse Power of a car with 4 calendar and mpg of 22 is", predicted_hp_car)
+```
+
+**Problem Statement-3**
+
+```{r}
+#Installing the "mlbench" package
+#install.packages('mlbench')
+#loading the "mlbench" package
+library(mlbench)
+data(BostonHousing)
+```
+
+**3. a) Build a model to estimate the median value of owner-occupied homes (medv)based on the following variables: crime crate (crim), proportion of residential land zoned for lots over 25,000 sq.ft (zn), the local pupil-teacher ratio (ptratio) and weather the whether the tract bounds Chas River(chas). Is this an accurate model? (Hint check R2 )**
+
+```{r}
+House_model <- lm(medv~crim+zn+ptratio+chas, data = BostonHousing)
+#printing the summary of the model
+summary(House_model)
+```
+
+#Finding the accuracy of model R-squared
+
+```{r}
+summary(House_model)$r.squared
+```
+
+#From the above model summary results, it can observed that When all predictor variables are zero, the projected median value of owner-occupied housing is represented by the model's intercept.
+
+#The projected median value of residences i.e., medv is statistically significantly impacted by each of the predictor factors of crim, zn, ptratio and chas1. The impact's direction is indicated by the coefficients' signs.
+
+#A lower median value is correlated with a greater crime rate since it has the negatively signed coefficient.
+
+#A greater median value since it has positively signed coefficient is correlated with a higher percentage of residential land zoned for big lots.
+
+#A lower median value is correlated with a larger pupil-teacher ratio since it has the negatively signed coefficient.
+
+#The Charles River-bound tracts had a higher median value since it has the positively signed coefficient in correlation.
+
+#With an R-squared of 0.3599, the model accounts for about 35.99% of the variation in median home values.
+
+**Coming to the accuracy of the model**
+
+All of the predictor variables in the model appear to be statistically significant, and the F-statistic indicates that the model as a whole is significant. There may be more factors that are not included in the model that also have an impact on home values, as indicated by the R-squared value, which indicates that the model's ability to explain the variance in median home values is only moderate.
+
+The model is a good place to start, but in order to fully capture the complexity of factors impacting median home values, it might be improved by taking into account more variables or using more sophisticated modelling approaches. The model gives a reasonable estimate, but by improving the model and taking into account other elements, its accuracy can be increased.
+
+**3.b) Use the estimated coefficient to answer these questions?**
+
+**3.b.I) Imagine two houses that are identical in all aspects but one bounds the Chas River and the other does not. Which one is more expensive and by how much?**
+
+#The difference in median house values (medv) between houses on the Charles River (chas1 = 1) and those not on the river (chas1 = 0) is determined by the coefficient calculated for the variable "chas1" in our previous linear regression model.
+
+#If two similar houses were equivalent in every other way, the one on the Charles River would be predicted to have a higher estimated value, which would be exactly equal to the coefficient for "chas1." This coefficient in our model is 4.58393. This indicates that the average cost of a house on the Charles River is anticipated to be $4,583.93 higher than the cost of a house not located along the river.
+
+#Therefore, assuming all other things remain the same, the estimated cost of the house on the Charles River is $4,583.93 higher than that of the house off the river.
+
+**3.b.II) Imagine two houses that are identical in all aspects but in the neighborhood of one of them the pupil-teacher ratio is 15 and in the other one is 18. Which one is more expensive and by how much?**
+
+The ptratio coefficient is 1.493. Therefore, there will be a 1.493 unit fall in the price of the neighborhood’s
+properties, or 1493 in thousands of dollars, for every unit rise in the pupil-teacher ratio (i.e., fewer teachers
+and more crowded classrooms in schools).
+
+(181493= 26874) (151493=22395) Substracting these we get $4481
+
+#Therefore, the home with a pupil-teacher ratio of 18 is less expensive ($4481) than the nearby home with a
+pupil-teacher ratio of 15. A 15 student-teacher ratio is therefore more expensive.
+
+**3.c)Which of the variables are statistically important (i.e. related to the house price)?**
+
+You can evaluate the p-values relating to the coefficients of each independent variable in your linear regression model to see whether factors are statistically significant in relation to house prices. Lower p-values, on the whole, are indicative of greater statistical significance and a meaningful relationship between the relevant variables and home prices.
+
+The p-value summary for the coefficients in your model is given below:
+
+Crim (Crime Rate): At 2.20e-10, the p-value for "crim" is incredibly low (less than 0.05). This suggests that there is a statistically significant correlation between the crime rate and home prices.
+
+ZN: 'zn' has a very low p-value of 6.14e-06. This implies that there is a statistically significant relationship between the percentage of land allocated for large lots and house prices.
+
+Ptratio, or the pupil-teacher ratio, has a very low p-value of less than 2e-16. This suggests that there is a strong statistical relationship between the student-teacher ratio and home prices.
+
+Chas1 (Charles River binary variable): 'chas1' has a low p-value of 0.000514. This shows that there is a statistically significant relationship between property prices and whether the tract borders the Charles River.
+
+**To summarise, the low p-values of the variables in our model (crim, zn, ptratio, and chas1) show that they are statistically significant and have an association with house prices.**
+
+**d) Use the anova analysis and determine the order of importance of these four variables.**
+
+```{r}
+anova_model<-anova(House_model)
+
+print(anova_model)
+```
+
+#We can ascertain the relative significance of these variables in explaining property prices based on the ANOVA results:
+
+The F and P values from the Anova Analysis are shown below.
+
+crim: F value: < 2.2e-16 Pr(>F): 118.007 (P-value is really modest.)
+
+ptratio: A very modest p-value of 86.287 Pr(>F): < 2.2e-16
+
+F value: 65.122 Pr(>F): 5.253e-15 (very tiny p-value) for zn
+
+chas: Pr(>F): 0.0005137 (Small p-value) F value: 12.224
+
+The first and most significant variable is the crime rate (crim), which has a low p-value (p < 2.2e-16) and a high F value.
+
+Pupil-Teacher Ratio (ptratio): This variable is the most significant and statistically significant in explaining house prices, with the lowest p-value (p < 2.2e-16) and the highest F value.
+
+The third most significant variable is the proportion of residential land zoned for large lots (zn), which has a low p-value (p = 5.253e-15) and a high F value.
+
+Is the Tract Charles River Boundary (chas1)? It has the highest p-value of the four factors, meaning that it is the least significant in explaining housing prices, even if it is statistically significant (p = 0.0005137).
+
+Thus, the order of significance in this model is as below
+
+Crim Rate(crim)
+
+Pupil-Teacher Ratio (ptratio)
+
+Proportion of Residential Land Zoned for Large Lots (zn)
+
+Whether the Tract Bounds the Charles River (chas1)
+
+
+
+
+
